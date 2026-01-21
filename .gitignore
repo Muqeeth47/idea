@@ -47,3 +47,5 @@ Thumbs.db
 # Testing
 coverage/
 .pytest_cache/
+.vercel
+.env*.local
