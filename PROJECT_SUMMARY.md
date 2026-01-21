@@ -1,3 +1,13 @@
+# ⚠️ ACTION REQUIRED: PUSH TO GITHUB
+
+**You must run this command in your local terminal to log in:**
+```bash
+git push -u origin main
+```
+*A browser window or login popup will appear. Login with your GitHub account.*
+
+---
+
 # 🎉 PROJECT COMPLETE - READY TO DEPLOY!
 
 ## ✅ What's Been Built
