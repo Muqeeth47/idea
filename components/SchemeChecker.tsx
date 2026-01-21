@@ -35,6 +35,7 @@ export default function SchemeChecker() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [savedSchemes, setSavedSchemes] = useState<Set<string>>(new Set());
+    const [isMounted, setIsMounted] = useState(false);
     const [answers, setAnswers] = useState<UserAnswers>({
         age: '',
         state: '',
@@ -47,6 +48,8 @@ export default function SchemeChecker() {
 
     // Load CSV data on mount
     useEffect(() => {
+        setIsMounted(true);
+
         Papa.parse('/data set.csv', {
             download: true,
             header: true,
@@ -60,10 +63,12 @@ export default function SchemeChecker() {
             },
         });
 
-        // Load saved schemes from localStorage
-        const saved = localStorage.getItem('savedSchemes');
-        if (saved) {
-            setSavedSchemes(new Set(JSON.parse(saved)));
+        // Load saved schemes from localStorage (client-side only)
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('savedSchemes');
+            if (saved) {
+                setSavedSchemes(new Set(JSON.parse(saved)));
+            }
         }
     }, []);
 
@@ -79,7 +84,9 @@ export default function SchemeChecker() {
             newSaved.add(schemeName);
         }
         setSavedSchemes(newSaved);
-        localStorage.setItem('savedSchemes', JSON.stringify([...newSaved]));
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('savedSchemes', JSON.stringify(Array.from(newSaved)));
+        }
     };
 
     // Smart eligibility matching
@@ -671,8 +678,8 @@ export default function SchemeChecker() {
                             <div className="flex items-start justify-between mb-4">
                                 <div
                                     className={`inline-block px-6 py-3 rounded-full font-bold text-lg ${(scheme.matchScore || 0) >= 70
-                                            ? 'bg-green-400 text-green-900'
-                                            : 'bg-amber-400 text-amber-900'
+                                        ? 'bg-green-400 text-green-900'
+                                        : 'bg-amber-400 text-amber-900'
                                         }`}
                                 >
                                     {(scheme.matchScore || 0) >= 70 ? '✓ Eligible' : '⚠ Partial Match'} - {scheme.matchScore}%
